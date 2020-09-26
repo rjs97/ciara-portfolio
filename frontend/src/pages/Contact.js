@@ -65,9 +65,14 @@ const Contact = () => {
       return
     }
 
-    axios.post('https://us-central1-ciara-post-portfolio.cloudfunctions.net/api/email', state).then(() => {
+    axios.post('https://us-central1-ciara-post-portfolio.cloudfunctions.net/api/email', state)
+      .then(() => {
         setState({ name: '', email: '', subject: '', message: '' })
         alert('Your message has been sent! I will be in contact shortly.')
+        setLoading(false)
+      })
+      .catch((err) => {
+        alert('Sorry, something went wrong. Please try again later.')
         setLoading(false)
       })
   }

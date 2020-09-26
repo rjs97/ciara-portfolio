@@ -1,7 +1,7 @@
 const functions = require('firebase-functions')
 const express = require('express')
 const fs = require('fs')
-// const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer')
 const cors = require('cors')
 const bodyParser = require('body-parser')
 const path = require('path')
@@ -21,42 +21,37 @@ app.post('/email', async (req, res) => {
 
   // TODO: it literally works if you run firebase serve but it doesnt if you try to deploy
   // create reusable transporter object using the default SMTP transport
-  // const transporter = nodemailer.createTransport({
-  //   service: 'gmail',
-  //   auth: {
-  //     user: 'ciara.post.contact@gmail.com',
-  //     pass: 'sfsux666'
-  //   }
-  // })
-  //
-  // var text = `<div>
-  //     <h3>Information</h3>
-  //     <ul>
-  //       <li>
-  //         Name - ${name}
-  //       </li>
-  //       <li>
-  //         Email - ${email}
-  //       </li>
-  //       <li>
-  //         Subject - ${subject}
-  //       </li>
-  //     </ul>
-  //     <h4>Message</h4>
-  //     <p>${message}</p>
-  //   </div>`
-  //
-  // // send mail with defined transport object
-  // const info = await transporter.sendMail({
-  //   from: `${name} <${email}>`, // sender address
-  //   to: 'athena2147@gmail.com', // TODO: switch this out for ciara's email
-  //   subject: `${subject}`, // Subject line
-  //   text: text, // plain text body
-  //   html: text // html body
-  // })
-  //
-  // console.log('Message sent: %s', info.messageId)
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'ciara.post.contact@gmail.com',
+      pass: 'xxxxxxx'
+    }
+  })
 
+  var text = `<div>
+      <h3>Website Contact Form Response</h3>
+      <h2>Name</h2>
+      <p>${name}</p>
+      <h2>Email</h2>
+      <p>${email}</p>
+      <h2>Subject</h2>
+      <p>${subject}</p>
+      <h2>Message</h2>
+      <p>${message}</p>
+    </div>`
+
+  // send mail with defined transport object
+  const info = await transporter.sendMail({
+    from: `${name} <${email}>`, // sender address
+    to: 'ciaragspost@gmail.com',
+    subject: `${subject}`, // Subject line
+    text: text, // plain text body
+    html: text // html body
+  })
+
+  console.log('Message sent: %s', info.messageId)
+  res.set('Access-Control-Allow-Origin', '*')
   res.send('OK')
 })
 
@@ -94,13 +89,9 @@ app.post('/add', (req, res) => {
 })
 
 app.get('/titles', (req, res) => {
-  // const filePath = req.query.path
   fs.readFile('data.json', (err, data) => {
     if (err) throw err
     const portfolio = JSON.parse(data)
-    // const toSend = portfolio.filter((img) => (
-    //   img.src.startsWith(filePath)
-    // ))
     res.send(portfolio)
   })
 })

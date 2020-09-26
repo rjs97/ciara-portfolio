@@ -16,14 +16,6 @@
         "function": "api"
       },
       {
-        "source": "/files",
-        "function": "api"
-      },
-      {
-        "source": "/add",
-        "function": "api"
-      },
-      {
         "source": "/title",
         "function": "api"
       }
