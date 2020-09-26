@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     flexDirection: 'row',
+    padding: theme.spacing(3),
   },
   // necessary for content to be below app bar
   toolbar: {
@@ -59,10 +60,12 @@ const Contact = () => {
     setLoading(true)
 
     const hasErrors = validate()
-    if (hasErrors) return
+    if (hasErrors) {
+      setLoading(false)
+      return
+    }
 
-    axios.post('http://localhost:8888/email', state)
-      .then(() => {
+    axios.post('https://us-central1-ciara-post-portfolio.cloudfunctions.net/api/email', state).then(() => {
         setState({ name: '', email: '', subject: '', message: '' })
         alert('Your message has been sent! I will be in contact shortly.')
         setLoading(false)

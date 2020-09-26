@@ -37,7 +37,7 @@ export default function AddArtwork () {
     console.log('fileName: ', fileName)
     axios.post('http://localhost:8888/add', { src: fileName, title, medium, dimensions, date })
       .then(() => {
-        window.location.href = 'http://localhost:3000/add'
+        window.location.href = 'https://ciara-post-portfolio.web.app/add'
       })
   }
 

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-// import Card from '@material-ui/core/Card'
-// import CardContent from '@material-ui/core/CardContent'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos'
 import Grid from '@material-ui/core/Grid'
@@ -9,10 +7,7 @@ import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
 import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
-
-import LazyLoad from 'react-lazyload'
 import axios from 'axios'
-
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -20,8 +15,16 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
   },
   gridList: {
-    width: 800,
-    maxWidth: '100%'
+    width: '75vw',
+    maxHeight: '90vh',
+    maxWidth: '100%',
+    overflow: 'hidden',
+    '& .MuiGridListTile-imgFullWidth': {
+      transform: 'none'
+    },
+    [(theme.breakpoints.down('sm'))]: {
+      width: '110vw'
+    }
   },
   card: {
     maxHeight: 300,
@@ -29,7 +32,11 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
   },
   // necessary for content to be below app bar
-  // toolbar: theme.mixins.toolbar,
+  // toolbar: {
+  //   [(theme.breakpoints.down('sm'))]: {
+  //     transform: 'translateX(-5%)'
+  //   },
+  // },
   title: {
     color: 'black',
     maxHeight: 20,
@@ -39,26 +46,33 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 11,
     marginLeft: 15,
   },
-}));
+  caption: {
+    fontSize: '1rem',
+    [(theme.breakpoints.down('sm'))]: {
+      fontSize: '.8rem'
+    }
+  }
+}))
 
-const Spinner = () => (
-  <h5>Loading...</h5>
-)
+const fileStructure = {
+  'BAThesis': {
+    size: 13,
+    filePrefix: 'Ciara-Post'
+  },
+  'SelectedWorks': {
+    size: 6,
+    filePrefix: 'Ciara-Post-SW'
+  }
+}
 
 const Artwork = ({ filePath }) => {
   const classes = useStyles()
-  const [activeStep, setActiveStep] = useState(0)
-  const [pieces, setPieces] = useState(null)
+  const [activeStep, setActiveStep] = useState(1)
   const [titles, setTitles] = useState(null)
 
   useEffect(() => {
-    setPieces(null)
-    setActiveStep(0)
-    axios.get(`http://localhost:8888/files?path=${filePath}`).then((res) => {
-      setPieces(res.data.files)
-    })
-    axios.get(`http://localhost:8888/titles?path=${filePath}`).then((res) => {
-      console.log('title res: ', res)
+    setActiveStep(1)
+    axios.get(`https://us-central1-ciara-post-portfolio.cloudfunctions.net/api/titles?path=${filePath}`).then((res) => {
       setTitles(res.data)
     })
   }, [filePath])
@@ -69,10 +83,10 @@ const Artwork = ({ filePath }) => {
       if (item.src === `${filePath}/${fileName}`) {
         return (
           <div key={item.title} style={{ height: 'auto' }}>
-            <Typography>{item.title}</Typography>
-            <Typography>{item.medium}</Typography>
-            <Typography>{item.dimensions}</Typography>
-            <Typography>{item.date}</Typography>
+            <Typography className={classes.caption}>{item.title}</Typography>
+            <Typography className={classes.caption}>{item.medium}</Typography>
+            <Typography className={classes.caption}>{item.dimensions}</Typography>
+            <Typography className={classes.caption}>{item.date}</Typography>
           </div>
         )
       }
@@ -88,37 +102,29 @@ const Artwork = ({ filePath }) => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1)
   }
 
-  if (!pieces) {
-    return <p>Loading...</p>
-  }
-
   return (
     <main className={classes.content}>
     <Grid container
       direction='row'
       alignItems='center'
-      justify='flex-start'
+      justify='center'
       className={classes.toolbar}
-      spacing={3}>
+      >
       <Grid item xs={3}>
-        <IconButton onClick={handleBack} disabled={activeStep === 0} >
+        <IconButton onClick={handleBack} disabled={activeStep === 1} >
           <ArrowBackIosIcon fontSize='small'/>
         </IconButton>
       </Grid>
       <Grid item xs={6}>
-        {pieces ?
-          <GridList cellHeight={700} cols={1} className={classes.gridList}>
-          <GridListTile style={{ height: 'auto', marginBottom: 20 }} key={pieces[activeStep]} cols={1}>
-            <LazyLoad key={pieces[activeStep]} placeholder={<Spinner/>}>
-              <img src={require(`../img/${filePath}/${pieces[activeStep]}`)} alt={`Ciara-Post-${activeStep}`} height={'100%'} width={'100%'} />
-            </LazyLoad>
+          <GridList cols={1} className={classes.gridList}>
+          <GridListTile style={{ height: '100%', display: 'block', marginBottom: 20 }} key={`Ciara-Post-${activeStep}`} cols={1}>
+            <img src={require(`../img/${filePath}/${fileStructure[filePath].filePrefix}-${activeStep}.jpg`)} alt={`Ciara-Post-${activeStep}`} height={'100%'} width={'100%'} />
+            {imageInfo(`${fileStructure[filePath].filePrefix}-${activeStep}.jpg`)}
           </GridListTile>
-          {imageInfo(pieces[activeStep])}
           </GridList>
-        : <p>Loading...</p> }
       </Grid>
       <Grid item xs={3}>
-        <IconButton onClick={handleNext} disabled={activeStep === (pieces.length - 1)}>
+        <IconButton onClick={handleNext} disabled={activeStep === (fileStructure[filePath].size)}>
           <ArrowForwardIosIcon fontSize='small' />
         </IconButton>
       </Grid>
