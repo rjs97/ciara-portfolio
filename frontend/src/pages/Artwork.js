@@ -16,12 +16,8 @@ const useStyles = makeStyles((theme) => ({
   },
   gridList: {
     width: '75vw',
-    maxHeight: '90vh',
     maxWidth: '100%',
     overflow: 'hidden',
-    '& .MuiGridListTile-imgFullWidth': {
-      transform: 'none'
-    },
     [(theme.breakpoints.down('sm'))]: {
       width: '110vw'
     }
@@ -117,7 +113,7 @@ const Artwork = ({ filePath }) => {
       </Grid>
       <Grid item xs={6}>
           <GridList cols={1} className={classes.gridList}>
-          <GridListTile style={{ height: '100%', display: 'block', marginBottom: 20 }} key={`Ciara-Post-${activeStep}`} cols={1}>
+          <GridListTile style={{ height: '100%', display: 'block' }} key={`Ciara-Post-${activeStep}`} cols={1}>
             <img src={require(`../img/${filePath}/${fileStructure[filePath].filePrefix}-${activeStep}.jpg`)} alt={`Ciara-Post-${activeStep}`} height={'100%'} width={'100%'} />
             {imageInfo(`${fileStructure[filePath].filePrefix}-${activeStep}.jpg`)}
           </GridListTile>
