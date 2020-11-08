@@ -19,8 +19,7 @@ app.post('/email', async (req, res) => {
 
   console.log('INFO: ', name, email, subject, message)
 
-  // TODO: it literally works if you run firebase serve but it doesnt if you try to deploy
-  // create reusable transporter object using the default SMTP transport
+  // create transporter object using the default SMTP transport
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
